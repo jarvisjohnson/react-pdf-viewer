@@ -5,4 +5,5 @@ node_modules
 samples/ignore
 package-lock.json
 packages/**/lib
+!packages/core/lib
 packages/**/node_modules

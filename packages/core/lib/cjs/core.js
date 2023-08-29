@@ -446,6 +446,9 @@ var useRenderQueue = function (_a) {
                 latestRef.current.visibilities[i].visibility = OUT_OF_RANGE_VISIBILITY;
                 latestRef.current.visibilities[i].renderStatus = PageRenderStatus.NotRenderedYet;
             }
+            else if (latestRef.current.visibilities[i].visibility === OUT_OF_RANGE_VISIBILITY) {
+                latestRef.current.visibilities[i].visibility = -1;
+            }
         }
     };
     var setOutOfRange = function (pageIndex) {
@@ -2796,6 +2799,40 @@ var calculateScale = function (container, pageHeight, pageWidth, scale, viewMode
     }
 };
 
+var useQueue = function (maxLength) {
+    var queueRef = React__namespace.useRef([]);
+    var dequeue = function () {
+        var queue = queueRef.current;
+        var size = queue.length;
+        if (size === 0) {
+            return null;
+        }
+        var firstItem = queue.shift();
+        queueRef.current = queue;
+        return firstItem || null;
+    };
+    var enqueue = function (item) {
+        var queue = queueRef.current;
+        if (queue.length + 1 > maxLength) {
+            queue.pop();
+        }
+        queueRef.current = [item].concat(queue);
+    };
+    var map = function (transformer) {
+        return queueRef.current.map(function (item) { return transformer(item); });
+    };
+    React__namespace.useEffect(function () {
+        return function () {
+            queueRef.current = [];
+        };
+    }, []);
+    return {
+        dequeue: dequeue,
+        enqueue: enqueue,
+        map: map,
+    };
+};
+
 var useStack = function (maxLength) {
     var stackRef = React__namespace.useRef([]);
     var map = function (transformer) {
@@ -2828,40 +2865,6 @@ var useStack = function (maxLength) {
         push: push,
         map: map,
         pop: pop,
-    };
-};
-
-var useQueue = function (maxLength) {
-    var queueRef = React__namespace.useRef([]);
-    var dequeue = function () {
-        var queue = queueRef.current;
-        var size = queue.length;
-        if (size === 0) {
-            return null;
-        }
-        var firstItem = queue.shift();
-        queueRef.current = queue;
-        return firstItem || null;
-    };
-    var enqueue = function (item) {
-        var queue = queueRef.current;
-        if (queue.length + 1 > maxLength) {
-            queue.pop();
-        }
-        queueRef.current = [item].concat(queue);
-    };
-    var map = function (transformer) {
-        return queueRef.current.map(function (item) { return transformer(item); });
-    };
-    React__namespace.useEffect(function () {
-        return function () {
-            queueRef.current = [];
-        };
-    }, []);
-    return {
-        dequeue: dequeue,
-        enqueue: enqueue,
-        map: map,
     };
 };
 

@@ -6,3 +6,4 @@ samples/ignore
 package-lock.json
 packages/**/lib
 packages/**/node_modules
+!packages/core/lib

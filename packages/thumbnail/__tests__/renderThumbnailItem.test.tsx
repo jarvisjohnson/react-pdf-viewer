@@ -1,10 +1,10 @@
-import { classNames, PdfJsApiContext, Viewer, type PdfJsApiProvider } from '@react-pdf-viewer/core';
+import { PdfJsApiContext, Viewer, classNames, type PdfJsApiProvider } from '@react-pdf-viewer/core';
 import { fireEvent, render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import * as PdfJs from 'pdfjs-dist';
 import * as React from 'react';
 import { mockIsIntersecting } from '../../../test-utils/mockIntersectionObserver';
 import { mockResize } from '../../../test-utils/mockResizeObserver';
-import { RenderThumbnailItemProps, thumbnailPlugin } from '../src';
+import { thumbnailPlugin, type RenderThumbnailItemProps } from '../src';
 
 const TestRenderThumbnailItem: React.FC<{
     fileUrl: Uint8Array;
@@ -103,7 +103,7 @@ test('Test renderThumbnailItem option', async () => {
     expect(thumbnailsContainer.querySelectorAll('.custom-thumbnail-item').length).toEqual(8);
 
     // Find the second thumbnail
-    let secondThumbnail = await findByTestId('thumbnail-1');
+    const secondThumbnail = await findByTestId('thumbnail-1');
     expect(secondThumbnail).toHaveClass('custom-thumbnail-item');
 
     // Scroll to the second page
@@ -116,7 +116,7 @@ test('Test renderThumbnailItem option', async () => {
     await findByTestId('core__text-layer-2');
 
     // Wait until the second thumbnail is rendered
-    let secondThumbnailContainer = await findByTestId('thumbnail__container-1');
+    const secondThumbnailContainer = await findByTestId('thumbnail__container-1');
     mockIsIntersecting(secondThumbnailContainer, true);
 
     const secondThumbnailImage = await findByLabelText('Thumbnail of page 2');

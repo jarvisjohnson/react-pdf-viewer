@@ -4,8 +4,7 @@ import { fireEvent, render, screen, waitForElementToBeRemoved } from '@testing-l
 import * as PdfJs from 'pdfjs-dist';
 import * as React from 'react';
 import { mockIsIntersecting } from '../../../test-utils/mockIntersectionObserver';
-import type { SingleKeyword } from '../src';
-import { searchPlugin } from '../src';
+import { searchPlugin, type SingleKeyword } from '../src';
 
 const TestClearHighlights: React.FC<{
     fileUrl: Uint8Array;
@@ -72,7 +71,7 @@ test('clearHighlights() method', async () => {
     await findByText('Simple PDF File 2');
 
     // Found 13 texts that match `PDF`
-    let highlights = await findAllByTitle(page, 'text');
+    const highlights = await findAllByTitle(page, 'text');
     expect(highlights.length).toEqual(13);
 
     // Click the `Clear highlights` button

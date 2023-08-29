@@ -1,5 +1,5 @@
 import { PdfJsApiContext, Viewer, type PdfJsApiProvider } from '@react-pdf-viewer/core';
-import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, waitForElementToBeRemoved } from '@testing-library/react';
 import * as PdfJs from 'pdfjs-dist';
 import * as React from 'react';
 import { mockIsIntersecting } from '../../../test-utils/mockIntersectionObserver';
@@ -44,7 +44,7 @@ const TestThumbnails: React.FC<{
 };
 
 test('Test <Thumbnails /> of a single page document', async () => {
-    const { findByLabelText, findByTestId, findByText, getByTestId } = render(
+    const { findAllByText, findByLabelText, findByTestId, getByTestId } = render(
         <TestThumbnails fileUrl={global['__DUMMY_PDF__']} />,
     );
 
@@ -54,12 +54,12 @@ test('Test <Thumbnails /> of a single page document', async () => {
     viewerEle['__jsdomMockClientWidth'] = 798;
 
     // Wait until the document is loaded completely
-    await waitForElementToBeRemoved(() => screen.getByTestId('core__doc-loading'));
+    await waitForElementToBeRemoved(() => getByTestId('core__doc-loading'));
     await findByTestId('core__text-layer-0');
     await findByTestId('core__annotation-layer-0');
 
     // Check if the text is rendered
-    const span = await findByText('Dummy PDF file');
+    const span = (await findAllByText('Dummy PDF file'))[0];
     expect(span.classList.contains('rpv-core__text-layer-text')).toEqual(true);
     expect(span.style.fontSize).toEqual('');
     expect(span.style.left).toEqual('9.55%');
@@ -86,11 +86,11 @@ test('Test <Thumbnails /> of a single page document', async () => {
     expect(thumbnailsContainer.querySelectorAll('.rpv-thumbnail__item').length).toEqual(1);
 
     // Check if the thumbnail is rendered
-    let firstThumbnailContainer = await findByTestId('thumbnail__container-0');
+    const firstThumbnailContainer = await findByTestId('thumbnail__container-0');
     mockIsIntersecting(firstThumbnailContainer, true);
 
     const firstThumbnailImage = await findByLabelText('Thumbnail of page 1');
-    let src = firstThumbnailImage.getAttribute('src');
+    const src = firstThumbnailImage.getAttribute('src');
     expect(src?.substring(0, 100)).toEqual(
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAACNCAYAAABBqd8eAAAABmJLR0QA/wD/AP+gvaeTAAACe0lEQV',
     );

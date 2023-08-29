@@ -1,5 +1,5 @@
 import { PdfJsApiContext, ThemeContext, Viewer, type PdfJsApiProvider } from '@react-pdf-viewer/core';
-import { ToolbarProps, defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
+import { defaultLayoutPlugin, type ToolbarProps } from '@react-pdf-viewer/default-layout';
 import { fireEvent, render, waitForElementToBeRemoved } from '@testing-library/react';
 import * as PdfJs from 'pdfjs-dist';
 import * as React from 'react';
@@ -41,6 +41,7 @@ const TestSwitchThemeButtonWithDefaultLayout: React.FC<{
 const TestSwitchThemeButtonWithoutDefaultLayout: React.FC<{
     fileUrl: Uint8Array;
 }> = ({ fileUrl }) => {
+    const apiProvider = PdfJs as unknown as PdfJsApiProvider;
     const themePluginInstance = themePlugin();
     const { SwitchThemeButton } = themePluginInstance;
 
@@ -52,20 +53,22 @@ const TestSwitchThemeButtonWithoutDefaultLayout: React.FC<{
     };
 
     return (
-        <ThemeContext.Provider value={themeContext}>
-            <div style={{ display: 'flex' }}>
-                <SwitchThemeButton />
-            </div>
-            <div
-                style={{
-                    border: '1px solid rgba(0, 0, 0, .3)',
-                    height: '50rem',
-                    width: '50rem',
-                }}
-            >
-                <Viewer fileUrl={fileUrl} theme={currentTheme} plugins={[themePluginInstance]} />
-            </div>
-        </ThemeContext.Provider>
+        <PdfJsApiContext.Provider value={{ pdfJsApiProvider: apiProvider }}>
+            <ThemeContext.Provider value={themeContext}>
+                <div style={{ display: 'flex' }}>
+                    <SwitchThemeButton />
+                </div>
+                <div
+                    style={{
+                        border: '1px solid rgba(0, 0, 0, .3)',
+                        height: '50rem',
+                        width: '50rem',
+                    }}
+                >
+                    <Viewer fileUrl={fileUrl} theme={currentTheme} plugins={[themePluginInstance]} />
+                </div>
+            </ThemeContext.Provider>
+        </PdfJsApiContext.Provider>
     );
 };
 
@@ -83,16 +86,16 @@ test('SwitchThemeButton() component with the default layout', async () => {
     await findByTestId('core__text-layer-0');
     await findByTestId('core__annotation-layer-0');
 
-    let firstText = await findByText('Hello, world!');
+    const firstText = await findByText('Hello, world!');
     expect(firstText).toHaveClass('rpv-core__text-layer-text');
 
     // Click the switch theme button
-    const switchButton = await getByLabelText('Switch to the dark theme');
+    const switchButton = getByLabelText('Switch to the dark theme');
     fireEvent.click(switchButton);
     expect(viewerEle.classList.contains('rpv-core__viewer--dark')).toEqual(true);
 
     // Click again to switch back to the light theme
-    const switchLightButton = await getByLabelText('Switch to the light theme');
+    const switchLightButton = getByLabelText('Switch to the light theme');
     fireEvent.click(switchLightButton);
     expect(viewerEle.classList.contains('rpv-core__viewer--dark')).toEqual(false);
     expect(viewerEle.classList.contains('rpv-core__viewer--light')).toEqual(true);
@@ -112,16 +115,16 @@ test('SwitchThemeButton() component without the default layout', async () => {
     await findByTestId('core__text-layer-0');
     await findByTestId('core__annotation-layer-0');
 
-    let firstText = await findByText('Hello, world!');
+    const firstText = await findByText('Hello, world!');
     expect(firstText).toHaveClass('rpv-core__text-layer-text');
 
     // Click the switch theme button
-    const switchButton = await getByLabelText('Switch to the dark theme');
+    const switchButton = getByLabelText('Switch to the dark theme');
     fireEvent.click(switchButton);
     expect(viewerEle.classList.contains('rpv-core__viewer--dark')).toEqual(true);
 
     // Click again to switch back to the light theme
-    const switchLightButton = await getByLabelText('Switch to the light theme');
+    const switchLightButton = getByLabelText('Switch to the light theme');
     fireEvent.click(switchLightButton);
     expect(viewerEle.classList.contains('rpv-core__viewer--dark')).toEqual(false);
     expect(viewerEle.classList.contains('rpv-core__viewer--light')).toEqual(true);

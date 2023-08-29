@@ -1,6 +1,11 @@
 import 'expect-puppeteer';
+import puppeteer from 'puppeteer';
 
 test('Jump back to the previous clicked link annotation', async () => {
+    const browser = await puppeteer.launch({
+        headless: false,
+    });
+    const page = await browser.newPage();
     await page.goto('http://localhost:3000/default-layout');
     await page.setViewport({
         width: 1920,
@@ -77,7 +82,7 @@ test('Jump back to the previous clicked link annotation', async () => {
         const linkIndex = Math.floor(Math.random() * links.length);
         const { id, targetPage, targetTop, annotationTop } = links[linkIndex];
 
-        let linkEle = await page.waitForSelector(`a[data-annotation-link="${id}"]`);
+        const linkEle = await page.waitForSelector(`a[data-annotation-link="${id}"]`);
         await linkEle?.click();
         await page.waitForFunction(
             () => () => `document.querySelector("[data-testid=core__inner-pages]").scrollTop === ${targetTop}`,
@@ -99,4 +104,5 @@ test('Jump back to the previous clicked link annotation', async () => {
     };
 
     await clickAnnotation();
+    await browser.close();
 });

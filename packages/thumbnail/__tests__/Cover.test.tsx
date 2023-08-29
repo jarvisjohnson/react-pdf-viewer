@@ -1,13 +1,18 @@
-import type { Plugin, RenderViewer } from '@react-pdf-viewer/core';
-import { Button, PdfJsApiContext, Viewer, type PdfJsApiProvider } from '@react-pdf-viewer/core';
+import {
+    Button,
+    PdfJsApiContext,
+    Viewer,
+    type PdfJsApiProvider,
+    type Plugin,
+    type RenderViewer,
+} from '@react-pdf-viewer/core';
 import { fireEvent, render, waitForElementToBeRemoved } from '@testing-library/react';
+import * as fs from 'node:fs';
+import * as path from 'path';
 import * as PdfJs from 'pdfjs-dist';
 import * as React from 'react';
 import { mockIsIntersecting } from '../../../test-utils/mockIntersectionObserver';
 import { thumbnailPlugin } from '../src';
-
-const fs = require('fs');
-const path = require('path');
 
 interface PageThumbnailPluginProps {
     PageThumbnail: React.ReactElement;
@@ -104,7 +109,7 @@ const TestMultipleCovers = () => {
 };
 
 test('Test multiple <Cover />', async () => {
-    const { findByTestId, findAllByTestId, getAllByTestId, getByTestId } = render(<TestMultipleCovers />);
+    const { findByTestId, getAllByTestId, getByTestId } = render(<TestMultipleCovers />);
 
     // Test the cover of the first document
     const viewerEleList = getAllByTestId('core__viewer');

@@ -2,8 +2,15 @@ import { fireEvent, render, waitForElementToBeRemoved } from '@testing-library/r
 import * as PdfJs from 'pdfjs-dist';
 import * as React from 'react';
 import { mockIsIntersecting } from '../../../test-utils/mockIntersectionObserver';
-import type { RenderProtectedViewProps } from '../src';
-import { PasswordStatus, PdfJsApiContext, PrimaryButton, TextBox, Viewer, type PdfJsApiProvider } from '../src';
+import {
+    PasswordStatus,
+    PdfJsApiContext,
+    PrimaryButton,
+    TextBox,
+    Viewer,
+    type PdfJsApiProvider,
+    type RenderProtectedViewProps,
+} from '../src';
 
 const ProtectedView: React.FC<RenderProtectedViewProps> = ({ passwordStatus, verifyPassword }) => {
     const [password, setPassword] = React.useState('');
@@ -62,7 +69,10 @@ const TestProtectedView = () => {
     return (
         <PdfJsApiContext.Provider value={{ pdfJsApiProvider: apiProvider }}>
             <div style={{ height: '50rem', width: '50rem' }}>
-                <Viewer fileUrl={global['__SAMPLE_PROTECTED_PDF__']} renderProtectedView={ProtectedView} />
+                <Viewer
+                    fileUrl={global['__SAMPLE_PROTECTED_PDF__']}
+                    renderProtectedView={(props: RenderProtectedViewProps) => <ProtectedView {...props} />}
+                />
             </div>
         </PdfJsApiContext.Provider>
     );

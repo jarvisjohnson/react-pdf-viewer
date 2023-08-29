@@ -7,7 +7,7 @@
  */
 
 import * as React from 'react';
-import type { PdfJs } from '../types/PdfJs';
+import { type PdfJs } from '../types/PdfJs';
 
 enum PageRenderStatus {
     NotRenderedYet = 'NotRenderedYet',
@@ -101,6 +101,9 @@ export const useRenderQueue = ({ doc }: { doc: PdfJs.PdfDocument }): UseRenderQu
             if (i < startIndex || i > endIndex) {
                 latestRef.current.visibilities[i].visibility = OUT_OF_RANGE_VISIBILITY;
                 latestRef.current.visibilities[i].renderStatus = PageRenderStatus.NotRenderedYet;
+            } else if (latestRef.current.visibilities[i].visibility === OUT_OF_RANGE_VISIBILITY) {
+                // Reset to -1, so the unit tests can determine the next page in the queue to be rendered
+                latestRef.current.visibilities[i].visibility = -1;
             }
         }
     };

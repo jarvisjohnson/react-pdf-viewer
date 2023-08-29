@@ -1,13 +1,12 @@
 import { Button, PdfJsApiContext, Viewer, type PdfJsApiProvider } from '@react-pdf-viewer/core';
-import { fireEvent, render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { fireEvent, render, waitForElementToBeRemoved } from '@testing-library/react';
+import * as fs from 'node:fs';
+import * as path from 'path';
 import * as PdfJs from 'pdfjs-dist';
 import * as React from 'react';
 import { mockIsIntersecting } from '../../../test-utils/mockIntersectionObserver';
 import { mockResize } from '../../../test-utils/mockResizeObserver';
 import { thumbnailPlugin } from '../src';
-
-const fs = require('fs');
-const path = require('path');
 
 const TestThumbnailsDynamicDocument = () => {
     const apiProvider = PdfJs as unknown as PdfJsApiProvider;
@@ -82,7 +81,7 @@ test('Test <Thumbnails /> with dynamic document', async () => {
     viewerEle['__jsdomMockClientWidth'] = 558;
 
     // Wait until the document is loaded completely
-    await waitForElementToBeRemoved(() => screen.getByTestId('core__doc-loading'));
+    await waitForElementToBeRemoved(() => getByTestId('core__doc-loading'));
     await findByTestId('core__text-layer-0');
     await findByTestId('core__annotation-layer-0');
     await findByTestId('core__text-layer-1');
@@ -134,7 +133,7 @@ test('Test <Thumbnails /> with dynamic document', async () => {
     fireEvent.click(getByText('Load document 2'));
 
     // Wait until the document is loaded completely
-    await waitForElementToBeRemoved(() => screen.getByTestId('core__doc-loading'));
+    await waitForElementToBeRemoved(() => getByTestId('core__doc-loading'));
     await findByTestId('core__text-layer-0');
     await findByTestId('core__annotation-layer-0');
     await findByTestId('core__text-layer-1');

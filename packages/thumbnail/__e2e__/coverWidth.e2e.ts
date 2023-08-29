@@ -1,6 +1,11 @@
 import 'expect-puppeteer';
+import puppeteer from 'puppeteer';
 
 test('Cover width property', async () => {
+    const browser = await puppeteer.launch({
+        headless: false,
+    });
+    const page = await browser.newPage();
     await page.goto('http://localhost:3000/thumbnail-cover-width');
     await page.setViewport({
         width: 1200,
@@ -8,8 +13,8 @@ test('Cover width property', async () => {
     });
     await page.evaluate(() => document.querySelector('[data-testid="core__viewer"]')?.scrollIntoView());
 
-    let imageEle = await page.waitForSelector('[data-testid="thumbnail__cover-image"]');
-    let result = await imageEle?.evaluate((node) => ({
+    const imageEle = await page.waitForSelector('[data-testid="thumbnail__cover-image"]');
+    const result = await imageEle?.evaluate((node) => ({
         cls: node.getAttribute('class'),
         src: node.getAttribute('src'),
         height: node.clientHeight,
@@ -23,4 +28,5 @@ test('Cover width property', async () => {
     expect(result?.src?.length).toEqual(19190);
     expect(result?.height).toEqual(400);
     expect(result?.width).toEqual(300);
+    await browser.close();
 });
